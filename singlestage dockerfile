@@ -1,0 +1,24 @@
+FROM tomcat:9.0-jdk11-openjdk-slim
+
+# Install git and maven
+RUN apt-get update && apt-get install -y git maven
+
+# Clone the repository
+WORKDIR /tmp
+RUN git clone https://github.com/srkdevops15/java_demo.git
+
+# Build the application
+WORKDIR /tmp/hello_world_public_war
+RUN mvn clean install -e -X
+
+# Copy the WAR file to Tomcat's webapps directory
+RUN cp webapp/target/webapp.war /usr/local/tomcat/webapps/
+
+# Clean up
+RUN apt-get remove -y git maven && \
+    apt-get autoremove -y && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* /tmp/* /root/.m2
+
+# Set the working directory to Tomcat's directory
+WORKDIR /usr/local/tomcat
