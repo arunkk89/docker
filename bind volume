@@ -1,0 +1,32 @@
+------------------------------------
+# app.py
+import time
+
+while True:
+    with open('/app/data/log.txt', 'a') as f:
+        f.write(f"Log entry at {time.time()}\n")
+    print("Wrote log entry")
+    time.sleep(10)
+-------------------------------------
+# Dockerfile
+FROM python:3.9-slim
+
+WORKDIR /app
+
+COPY app.py .
+
+CMD ["python", "app.py"]
+
+----------------------
+commands
+---------------
+mkdir data -----create a directory in host , bind this directory to your conatiner so what ever the changes that yopu are making that will refelect in host directory aswell inside the container also
+if the container deleted also..the data will persist in host directory
+docker build -t binddemo .
+docker run -d --name bindcontainer -v $(pwd)/data:/app/data binddemo
+
+note:
+Named volumes are easy to manage and reference.
+Anonymous volumes are created automatically but harder to manage.
+Bind mounts link directly to a host directory, useful for development
+shared volumes are going to share for multiple containers
