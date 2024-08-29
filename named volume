@@ -1,0 +1,45 @@
+named volume
+
+
+app.py
+--------------------------------
+import time
+import os
+
+def write_to_file():
+    filename = '/app/data.txt'
+    while True:
+        timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
+        with open(filename, 'a') as file:
+            file.write(f"Data written at {timestamp}\n")
+        print(f"Data written to {filename}")
+        
+        # Read and print the contents of the file
+        with open(filename, 'r') as file:
+            print("File contents:")
+            print(file.read())
+        
+        # Sleep for 10 seconds
+        time.sleep(10)
+
+if __name__ == "__main__":
+    print("Starting the application...")
+    write_to_file()
+--------------------------
+dockerfile
+----------------------------
+FROM python:3.9-slim
+WORKDIR /app
+COPY app.py .
+CMD ["python", "app.py"]
+-----------------
+commands
+----------------
+docker build -t namedvolumedemo .
+docker images
+docker volume create examplevolume
+docker volume ls
+docker run -d --name namedvolumetest -v examplevolume:/app namedvolumedemo
+----------------------
+default folder for volume is /var/lib/docker/volumes
+inside this we can see our created volume using cli ,if the container terminated also the data will be stored in the volume in the above mentioned path
